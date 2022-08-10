@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
+import mlflow
 import torch
 from torch import nn
 from datasets import DatasetDict
@@ -26,8 +27,10 @@ import evaluate
 from evaluate import evaluator
 
 from zenml.steps import step
+from zenml.integrations.mlflow.mlflow_step_decorator import enable_mlflow
 
 
+@enable_mlflow
 @step
 def sequence_evaluator(
     config: HuggingfaceConfig,
@@ -76,4 +79,7 @@ def sequence_evaluator(
             label_mapping={"LABEL_0": 0, "LABEL_1": 1},
             metric = evaluate.combine(["accuracy", "recall", "precision", "f1"]),
         )
+
+    mlflow.autolog()
+    mlflow.log_metric("val_accuracy", metrics["accuracy"])
     return metrics["accuracy"]

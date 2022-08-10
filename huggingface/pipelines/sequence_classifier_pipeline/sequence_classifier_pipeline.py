@@ -23,6 +23,7 @@ def seq_classifier_train_eval_pipeline(
     tokenizer = load_tokenizer()
     tokenized_datasets = tokenization(tokenizer=tokenizer, datasets=datasets)
     model = trainer(tokenized_datasets=tokenized_datasets, tokenizer=tokenizer)
-    evaluator(
+    metrics = evaluator(
         model=model, tokenized_datasets=tokenized_datasets, tokenizer=tokenizer
     )
+    print(f"Metrics: {metrics}")
