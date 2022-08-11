@@ -26,7 +26,8 @@ from steps import (
     token_evaluator,
     token_trainer,
 )
-from steps.configuration import HuggingfaceConfig
+
+from steps.configuration import HuggingfaceConfig, MLflowConfig
 
 
 @click.command()

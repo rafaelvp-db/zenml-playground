@@ -12,13 +12,13 @@
 #  or implied. See the License for the specific language governing
 #  permissions and limitations under the License.
 import mlflow
-import torch
+import os
 from torch import nn
 from datasets import DatasetDict
-from steps.configuration import HuggingfaceConfig
+from ..configuration import MLflowConfig
+from steps.configuration import HuggingfaceConfig, MLflowConfig
 from transformers import (
     pipeline,
-    DataCollatorWithPadding,
     PreTrainedTokenizerBase,
     PreTrainedModel
 )
@@ -29,6 +29,7 @@ from evaluate import evaluator
 from zenml.steps import step
 from zenml.integrations.mlflow.mlflow_step_decorator import enable_mlflow
 
+mlflow_config = MLflowConfig(experiment_name = "text-classification")
 
 @enable_mlflow
 @step
@@ -36,7 +37,7 @@ def sequence_evaluator(
     config: HuggingfaceConfig,
     model: PreTrainedModel,
     tokenized_datasets: DatasetDict,
-    tokenizer: PreTrainedTokenizerBase,
+    tokenizer: PreTrainedTokenizerBase
 ) -> float:
     """Evaluate trained model on validation set"""
 
@@ -51,8 +52,6 @@ def sequence_evaluator(
 
     dummy_validation_set = validation_set \
         .select(list(range(0,10)))
-
-    print(columns_to_remove)
 
     # Calculate loss
 
@@ -80,6 +79,10 @@ def sequence_evaluator(
             metric = evaluate.combine(["accuracy", "recall", "precision", "f1"]),
         )
 
-    mlflow.autolog()
-    mlflow.log_metric("val_accuracy", metrics["accuracy"])
+    with mlflow.start_run(
+        experiment_id = mlflow_config.experiment.experiment_id,
+        nested = True
+    ) as run:
+        mlflow.log_metrics(metrics)
+
     return metrics["accuracy"]

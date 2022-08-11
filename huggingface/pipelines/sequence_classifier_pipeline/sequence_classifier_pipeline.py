@@ -19,11 +19,13 @@ def seq_classifier_train_eval_pipeline(
     importer, load_tokenizer, tokenization, trainer, evaluator
 ):
     """Train and Evaluation pipeline"""
+
     datasets = importer()
     tokenizer = load_tokenizer()
     tokenized_datasets = tokenization(tokenizer=tokenizer, datasets=datasets)
     model = trainer(tokenized_datasets=tokenized_datasets, tokenizer=tokenizer)
-    metrics = evaluator(
-        model=model, tokenized_datasets=tokenized_datasets, tokenizer=tokenizer
+    evaluator(
+        model=model,
+        tokenized_datasets=tokenized_datasets,
+        tokenizer=tokenizer
     )
-    print(f"Metrics: {metrics}")
