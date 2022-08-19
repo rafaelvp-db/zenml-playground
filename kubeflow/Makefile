@@ -19,5 +19,8 @@ stack:
 kubeflow:
 	zenml stack up
 
+stop:
+	kubectl delete ns kubeflow
+
 run:
 	python run.py
