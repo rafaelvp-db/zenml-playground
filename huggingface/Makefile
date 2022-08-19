@@ -7,7 +7,7 @@ clean:
 	zenml experiment-tracker delete mlflow_tracker && \
 	zenml artifact-store delete local_artifact_store && \
 	zenml metadata-store delete sqlite_meta_store && \
-	rm -rf mlruns
+	rm -rf .data
 
 mlflow:
 	zenml experiment-tracker register mlflow_tracker --flavor=mlflow && \

@@ -162,3 +162,7 @@ cython_debug/
 #MLflow
 */mlruns
 *.sqlite
+*.db
+.vscode
+.system
+.data
